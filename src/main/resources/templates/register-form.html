@@ -1,0 +1,43 @@
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Sign Up</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div th:replace="~{error.html}"></div>
+                <form th:action="@{/register}" method="post" th:object="${user}">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <input type="email" name="email" th:field="*{email}" id="email" class="form-control" placeholder="Enter the email" required>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <input type="text" class="form-control" th:field="*{firstName}" placeholder="First name" aria-label="First name" name="firstName">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" th:field="*{lastName}" placeholder="Last name" aria-label="Last name" name="lastName">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <select class="form-select" aria-label="Gender" name="gender" th:field="*{gender}">
+                                <option selected value="MALE">MALE</option>
+                                <option value="FEMALE">FEMALE</option>
+                                <option value="OTHER">OTHER</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Register</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

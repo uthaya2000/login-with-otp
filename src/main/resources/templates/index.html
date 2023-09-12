@@ -1,0 +1,61 @@
+<div th:replace = "~{header.html}"></div>
+
+<div class="mx-auto mt-3" style="width: 500px;">
+    <div id="successMsg" class="alert alert-success d-flex align-items-center d-none" role="alert">
+        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+        <div>
+            Your are Registered successfully. Please login now.
+        </div>
+    </div>
+</div>
+<div class="position-absolute top-50 start-50 translate-middle">
+    <div th:replace="~{error.html}"></div>
+    <h1 class="display-1">Geo World</h1>
+    <div class="d-flex justify-content-center">
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{register-form.html}"></div>
+<div th:replace="~{login-form.html}"></div>
+<div th:replace = "~{footer.html}"></div>
+
+<script>
+
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("success")){
+        let successDiv = document.getElementById("successMsg");
+        successDiv.classList.remove("d-none");
+    }
+
+    async function sendOtp(emailId, butId) {
+        let email = document.getElementById(emailId).value
+        if (email == null || email == "")
+            return;
+
+        document.getElementById(butId).disabled = true;
+        const response = await fetch("send-otp?email=" + email);
+        if (response.status != 200) {
+            document.getElementById(butId).innerText = "OTP Sent Failed";
+            setTimeout(() => {
+                document.getElementById(butId).disabled = false;
+                document.getElementById(butId).innerText = "Send OTP"
+            }, 5000);
+            return;
+        }
+
+        document.getElementById(butId).innerText = "OTP Sent!!"
+
+        setTimeout(() => {
+            document.getElementById(butId).disabled = false;
+            document.getElementById(butId).innerText = "Send OTP"
+        }, 5000);
+
+    }
+</script>
