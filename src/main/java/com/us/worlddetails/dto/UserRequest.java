@@ -1,4 +1,4 @@
-package com.us.worlddetails.pojo;
+package com.us.worlddetails.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

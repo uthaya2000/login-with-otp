@@ -26,4 +26,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     private Gender gender;
+
+    @Column(name = "otp")
+    private String otp;
 }

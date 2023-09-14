@@ -1,7 +1,7 @@
 package com.us.worlddetails.security;
 
 import com.us.worlddetails.config.UserDetailsServiceImpl;
-import jakarta.servlet.ServletException;
+import com.us.worlddetails.repo.UserRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +13,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
@@ -27,19 +27,25 @@ public class SecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    UserRepo userRepo;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/", "/send-otp", "/register", "/login")
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers( "/send-otp", "/register", "/login", "/img/**")
                         .permitAll()
                         .anyRequest().authenticated())
-                /*.formLogin(form -> form
+                .formLogin(form -> form
                         .loginPage("/")
-                        .usernameParameter("email")
                         .loginProcessingUrl("/login")
-                        .passwordParameter("otp")
-                        .defaultSuccessUrl("/world")
-                        .permitAll())*/
+                        .defaultSuccessUrl("/dashboard")
+                        .successHandler((request, response, authentication) -> {
+                            User user = (User) authentication.getPrincipal();
+                            userRepo.clearOtp(user.getUsername());
+                            response.sendRedirect("/dashboard");
+                        })
+                        .permitAll())
                 .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .addLogoutHandler((HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
                             try {

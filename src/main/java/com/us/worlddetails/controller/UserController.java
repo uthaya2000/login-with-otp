@@ -1,17 +1,13 @@
 package com.us.worlddetails.controller;
 
-import com.us.worlddetails.entity.User;
-import com.us.worlddetails.pojo.UserRequest;
-import com.us.worlddetails.service.OTPService;
+import com.us.worlddetails.dto.SearchDTO;
+import com.us.worlddetails.dto.UserRequest;
 import com.us.worlddetails.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.StringUtils;
 
 @Controller
@@ -19,9 +15,6 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    OTPService otpService;
 
     @GetMapping("/")
     public String showRegistrationForm(Model model) {
@@ -35,22 +28,28 @@ public class UserController {
         return userService.userRegistration(userRequest, model);
     }
 
-    @PostMapping("/login")
-    public String userLogin(@ModelAttribute UserRequest userRequest, Model model) {
-        return userService.userLogin(userRequest, model);
-    }
-
     @GetMapping("/send-otp")
     public ResponseEntity<?> sendOtp(@RequestParam(name = "email") String email) {
         if (StringUtils.isEmpty(email))
             return ResponseEntity.badRequest().build();
 
-        boolean isSent = otpService.sendOtp(email);
-        return isSent ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+        return userService.sendOtp(email);
+    }
+
+    @GetMapping("/dashboard")
+    public String viewWorldPage (@RequestParam(value = "search", defaultValue = "") String search
+            , Model model) {
+
+        return userService.viewDashboard(search, model);
     }
 
     @GetMapping("/world")
-    public String viewWorldPage (Model model) {
-        return "world";
+    public ResponseEntity<SearchDTO> searchData(@RequestParam("search") String search) {
+        return userService.searchData(search);
+    }
+
+    @GetMapping("/world/{code}")
+    public String viewCountryDetails(Model model, @PathVariable("code") String code) {
+        return userService.viewCountryDetails(model, code);
     }
 }

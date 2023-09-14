@@ -1,0 +1,109 @@
+<div th:replace = "~{header.html}"></div>
+
+<h2 th:if="${not #strings.isEmpty(name)}" class="mt-5" th:text="'Hi ' + ${name}"></h2>
+
+<div class="mt-3 d-flex justify-content-center">
+    <form class="d-flex" th:action="@{/dashboard}">
+        <input class="form-control me-2" id="search" name="search" type="search" placeholder="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+</div>
+
+<span id="countrysuggestion"></span>
+<span id="langsuggestion"></span>
+<span id="citysuggestion"></span>
+
+<div th:if="${searchData != null}" id="searchResult">
+    <p class="mt-3">Countries</p>
+    <div class="list-group" th:if="${not #lists.isEmpty(searchData.countryNames)}" th:each="country: ${searchData.countryNames}">
+        <a th:href="@{${'/world/' + country}}" class="link-primary list-group-item list-group-item-action" th:text="${country}"></a>
+    </div>
+
+    <p class="mt-3">Cities</p>
+    <ul class="list-group" th:if="${not #lists.isEmpty(searchData.cityNames)}" th:each="city: ${searchData.cityNames}">
+        <li class="link-primary list-group-item list-group-item-action" th:text="${city}"></li>
+    </ul>
+
+    <p class="mt-3">Languages</p>
+    <ul class="list-group" th:if="${not #lists.isEmpty(searchData.languages)}" th:each="lang: ${searchData.languages}">
+        <li class="link-primary list-group-item list-group-item-action" th:text="${lang}"></li>
+    </ul>
+</div>
+
+<!-- <div class="mt-3 row" th:if="${not #lists.isEmpty(countries)}">
+    <div class="col-xl-3" th:each="country: ${countries}">
+        <div class="card mt-2" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${country.name}"></h5>
+                <h6 class="card-subtitle mb-2 text-muted" th:text="${country.code}"></h6>
+                <p class="card-text" th:text="'This country present in ' + ${country.continent} + ' continent'"></p>
+                <a href="#" class="card-link">View More</a>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div th:replace = "~{footer.html}"></div>
+
+<script>
+    const myInput = document.getElementById('search');
+
+    const debounce = (fn, duration) => {
+        let timer = null;
+        return function (...args) {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = null;
+            }, duration);
+        }
+    }
+
+    const makeApiCall = async (event) => {
+        const val = event.target.value;
+        if (val.length >= 3) {
+            let searchResult = document.getElementById("searchResult");
+            if (searchResult)
+                searchResult.style.display = "none";
+            const response = await fetch("/world?search=" + val);
+            let json = await response.json();
+            
+            addCountrySuggestion(json.countryNames);
+            addSuggesstion(json.languages, 'Languages', "langsuggestion");
+            addSuggesstion(json.cityNames, 'Cities', "citysuggestion");
+
+        }
+    }
+
+    function addSuggesstion(list, name, replaceId) {
+        let html = `<p class="mt-3">${name}</p><ul class="list-group">`;
+        if (list.length) {
+            list.forEach(item => {
+                html += `<li class="list-group-item">${item}</li>`
+            });
+        } else {
+            html += '<li class="list-group-item">No result found</li>'
+        }
+        html += '</ul>';
+        document.getElementById(replaceId).innerHTML = html;
+    }
+
+    function addCountrySuggestion(list) {
+        let html = '<p class="mt-3">Countries</p><div class="list-group">'
+        if (list.length) {
+            list.forEach(item => {
+                html += `<a href='/world/${item.countryCode}' class="link-primary list-group-item">${item.countryName} (click here)</a>`
+            });
+        } else {
+            html += '<li class="list-group-item">No result found</li>'
+        }  
+        html += '</div>';
+        document.getElementById("countrysuggestion").innerHTML = html;
+    }
+
+    myInput.addEventListener('input', debounce(makeApiCall, 1000))
+
+    
+</script>

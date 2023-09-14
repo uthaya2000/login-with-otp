@@ -27,7 +27,7 @@ public class City {
     @Column(name = "Population")
     private Integer population;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "CountryCode", referencedColumnName = "Code", insertable = false, updatable = false)
     private Country country;
 }

@@ -1,0 +1,21 @@
+<div th:replace = "~{header.html}"></div>
+<header class="text-center mt-5">
+    <h1 th:text="${countryDetails.country.name} + '(' + ${countryDetails.country.code} + ')'"></h1>
+    <h6 th:text="${countryDetails.country.continent}"></h6>
+</header>
+
+<section class="mt-5">
+    <div class="text-center">
+        <h2>Country Information</h2>
+        <ul class="list-group">
+            <li class="list-group-item" th:if="${countryDetails.country.population != null}">
+                <strong th:text="'Population: ' + ${countryDetails.country.population}"></strong>
+            </li>
+            <li class="list-group-item" th:each="city: ${countryDetails.cities}">
+                <span th:text="${city.name} + '-'"></span>
+            </li>
+            
+        </ul>
+    </div>
+</section>
+<div th:replace = "~{footer.html}"></div>

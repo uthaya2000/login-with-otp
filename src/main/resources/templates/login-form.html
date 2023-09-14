@@ -7,17 +7,17 @@
             </div>
             <div class="modal-body">
                 <div th:replace="~{error.html}"></div>
-                <form th:action="@{/login}" method="post" th:object="${user}">
+                <form th:action="@{/login}" method="post">
                     <div class="row mb-3">
                         <div class="col">
-                            <input type="email" name="email" th:field="*{email}" id="loginEmail" class="form-control" placeholder="Enter the email" required>
+                            <input type="email" name="username" id="loginEmail" class="form-control" placeholder="Enter the email" required>
                         </div>
                         <div class="col">
                             <button type="button" id="loginOtp" class="btn btn-primary btn-sm" onclick="sendOtp('loginEmail', 'loginOtp')">Send OTP</button>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" th:field="*{otp}" id="loginOtpInput" placeholder="OTP" name="otp">
+                        <input type="password" class="form-control" id="loginOtpInput" placeholder="OTP" name="password">
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>

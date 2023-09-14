@@ -19,15 +19,14 @@ public class Country implements Serializable {
     @Column(name = "Name")
     private String name;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Continent")
-    private Continent continent;
+    private String continent;
 
     @Column(name = "Region")
     private String region;
 
     @Column(name = "SurfaceArea")
-    private Float surfaceArea;
+    private Double surfaceArea;
 
     @Column(name = "IndepYear")
     private Short indepYear;
@@ -36,13 +35,13 @@ public class Country implements Serializable {
     private Integer population;
 
     @Column(name = "LifeExpectancy")
-    private Float lifeExpectancy;
+    private Double lifeExpectancy;
 
     @Column(name = "GNP")
-    private Float gnp;
+    private Double gnp;
 
     @Column(name = "GNPOld")
-    private Float gnpOld;
+    private Double gnpOld;
 
     @Column(name = "LocalName")
     private String localName;
